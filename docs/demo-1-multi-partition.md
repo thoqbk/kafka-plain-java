@@ -84,3 +84,5 @@ Consumer uses `.commitSync()` to commit the offset of all polled messages. Witho
 Putting `.commitSync()` after the message processing to guarantee delivers `at least once` and before it for delivering `at most once`
 
 May need to implement the message processing logic in idempotent way to ensure the re-delivered messages won't cause any issue.
+
+Using `consumer.seek()` to update the value of the offset for next poll
