@@ -24,7 +24,7 @@ bin/kafka-server-start.sh config/server.properties
 ```
 
 ## Demos:
-- Demo 1: [multi-consumer instances with 1 topic and multi-partition](docs/demo-1-multi-partition.md)
+- [Demo 1: multi-consumer instances with 1 topic and multi-partition](docs/demo-1-multi-partition.md)
 
 ## References
 - [What is Apache Kafka?](https://www.youtube.com/watch?v=FKgi3n-FyNU)
