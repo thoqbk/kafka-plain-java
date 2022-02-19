@@ -24,11 +24,14 @@ public class RunnableConsumer implements Runnable {
 
   @Override
   public void run() {
+    logger.info("Consumer is starting. Id {}", id);
     Consumer<Long, String> consumer = createConsumer(id);
-
     int noMessageFound = 0;
+    int consumedMessages = 0;
     while (true) {
-      ConsumerRecords<Long, String> consumerRecords = consumer.poll(Duration.ofSeconds(1));
+      logger.info("Consumer is polling for new messages");
+      ConsumerRecords<Long, String> consumerRecords =
+          consumer.poll(Duration.ofSeconds(Config.POLLING_TIME_SECOND));
       if (consumerRecords.isEmpty()) {
         noMessageFound++;
         if (noMessageFound > Config.MAX_NO_MESSAGE_FOUND_COUNT) {
@@ -36,6 +39,7 @@ public class RunnableConsumer implements Runnable {
         }
         continue;
       }
+      noMessageFound = 0;
       consumerRecords.forEach(
           record -> {
             logger.info(
@@ -45,6 +49,11 @@ public class RunnableConsumer implements Runnable {
                 record.partition(),
                 record.offset());
           });
+      consumedMessages += consumerRecords.count();
+      logger.info("Consumer {} consumed {} message(s)", id, consumedMessages);
+      // To commit the offset of all polled messages
+      // Without committing, when re-balancing happens, e.g. 1 more consumer joins, Kafka will
+      // re-deliver all messages from the last commit point
       consumer.commitSync();
     }
   }

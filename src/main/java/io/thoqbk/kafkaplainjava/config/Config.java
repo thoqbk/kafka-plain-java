@@ -7,6 +7,8 @@ public class Config {
 
   public static final String GROUP_ID_CONFIG = "consumerGroup1";
 
+  public static final int POLLING_TIME_SECOND = 10;
+
   public static final int MAX_NO_MESSAGE_FOUND_COUNT = 100;
 
   public static final String OFFSET_RESET_LATEST = "latest";
