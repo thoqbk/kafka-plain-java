@@ -5,11 +5,15 @@ import io.thoqbk.kafkaplainjava.exception.EnqueueException;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
 public class RunnableProducer implements Runnable {
+  private static final Logger logger = LoggerFactory.getLogger(RunnableProducer.class);
+
   private int messages;
   private String id;
 
@@ -25,13 +29,11 @@ public class RunnableProducer implements Runnable {
       ProducerRecord<Long, String> record =
           new ProducerRecord<>(Config.TOPIC_NAME, idx, "This is record " + idx);
       RecordMetadata metadata = send(producer, record);
-      System.out.println(
-          "Record sent with key "
-              + idx
-              + " to partition "
-              + metadata.partition()
-              + " with offset "
-              + metadata.offset());
+      logger.info(
+          "Record sent with key {} to partition {} with offset {}",
+          idx,
+          metadata.partition(),
+          metadata.offset());
     }
   }
 

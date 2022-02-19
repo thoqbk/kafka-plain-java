@@ -7,12 +7,15 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.LongDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
 public class RunnableConsumer implements Runnable {
+  private static final Logger logger = LoggerFactory.getLogger(RunnableConsumer.class);
   private String id;
 
   public RunnableConsumer(String id) {
@@ -33,13 +36,14 @@ public class RunnableConsumer implements Runnable {
         }
         continue;
       }
-
       consumerRecords.forEach(
           record -> {
-            System.out.println("Key: " + record.key());
-            System.out.println("Value: " + record.value());
-            System.out.println("Partition: " + record.partition());
-            System.out.println("Offset: " + record.offset());
+            logger.info(
+                "Received key {}, value {}, partition {}, offset {}",
+                record.key(),
+                record.value(),
+                record.partition(),
+                record.offset());
           });
       consumer.commitSync();
     }
@@ -56,7 +60,7 @@ public class RunnableConsumer implements Runnable {
     props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, Config.OFFSET_RESET_EARLIEST);
     props.put(ConsumerConfig.CLIENT_ID_CONFIG, id);
 
-    Consumer<Long, String> retVal = new KafkaConsumer<Long, String>(props);
+    Consumer<Long, String> retVal = new KafkaConsumer<>(props);
     retVal.subscribe(Collections.singletonList(Config.TOPIC_NAME));
 
     return retVal;
