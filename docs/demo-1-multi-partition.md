@@ -82,3 +82,5 @@ Observation:
 Consumer uses `.commitSync()` to commit the offset of all polled messages. Without committing, when re-balancing happens, e.g. 1 more consumer joins, Kafka will re-deliver all messages from the last commit point
 
 Putting `.commitSync()` after the message processing to guarantee delivers `at least once` and before it for delivering `at most once`
+
+May need to implement the message processing logic in idempotent way to ensure the re-delivered messages won't cause any issue.
