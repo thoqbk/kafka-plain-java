@@ -73,4 +73,12 @@ Kafka re-balances consumers in the group
 [2022-02-18 08:52:15,882] INFO [GroupCoordinator 0]: Preparing to rebalance group consumerGroup1 in state PreparingRebalance with old generation 8 (__consumer_offsets-6) (reason: Adding new member consumer-consumerGroup1-1-c56f58fd-6a92-4604-bd8f-fa51e0eec988 with group instance id None) (kafka.coordinator.group.GroupCoordinator)
 ```
 
-Run producer again, `Consumer 1` consumes messages from `partition 1` and `Consumer 2` consumes messages from `partition 2` only.
+4. Run producer again
+
+Observation:
+- `Consumer 1` consumes messages from `partition 1`, `Consumer 2` consumes messages from `partition 2` only.
+- If running new consumer, the new one won't receive any message because there're only 2 partitions in the topic.
+
+Consumer uses `.commitSync()` to commit the offset of all polled messages. Without committing, when re-balancing happens, e.g. 1 more consumer joins, Kafka will re-deliver all messages from the last commit point
+
+Putting `.commitSync()` after the message processing to guarantee delivers `at least once` and before it for delivering `at most once`
