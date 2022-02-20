@@ -1,6 +1,7 @@
 package io.thoqbk.kafkaplainjava;
 
-import io.thoqbk.kafkaplainjava.config.Config;
+import io.thoqbk.kafkaplainjava.config.ClientConfig;
+import io.thoqbk.kafkaplainjava.constant.Constants;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -16,25 +17,25 @@ import java.util.Properties;
 
 public class RunnableConsumer implements Runnable {
   private static final Logger logger = LoggerFactory.getLogger(RunnableConsumer.class);
-  private String id;
+  private final ClientConfig clientConfig;
 
-  public RunnableConsumer(String id) {
-    this.id = id;
+  public RunnableConsumer(ClientConfig clientConfig) {
+    this.clientConfig = clientConfig;
   }
 
   @Override
   public void run() {
-    logger.info("Consumer is starting. Id {}", id);
-    Consumer<Long, String> consumer = createConsumer(id);
+    logger.info("Consumer is starting. Id {}", clientConfig.getId());
+    Consumer<Long, String> consumer = createConsumer();
     int noMessageFound = 0;
     int consumedMessages = 0;
     while (true) {
       logger.info("Consumer is polling for new messages");
       ConsumerRecords<Long, String> consumerRecords =
-          consumer.poll(Duration.ofSeconds(Config.POLLING_TIME_SECOND));
+          consumer.poll(Duration.ofSeconds(Constants.POLLING_TIME_SECOND));
       if (consumerRecords.isEmpty()) {
         noMessageFound++;
-        if (noMessageFound > Config.MAX_NO_MESSAGE_FOUND_COUNT) {
+        if (noMessageFound > Constants.MAX_NO_MESSAGE_FOUND_COUNT) {
           break;
         }
         continue;
@@ -50,7 +51,7 @@ public class RunnableConsumer implements Runnable {
                 record.offset());
           });
       consumedMessages += consumerRecords.count();
-      logger.info("Consumer {} consumed {} message(s)", id, consumedMessages);
+      logger.info("Consumer {} consumed {} message(s)", clientConfig.getId(), consumedMessages);
       // To commit the offset of all polled messages
       // Without committing, when re-balancing happens, e.g. 1 more consumer joins, Kafka will
       // re-deliver all messages from the last commit point
@@ -58,19 +59,19 @@ public class RunnableConsumer implements Runnable {
     }
   }
 
-  private Consumer<Long, String> createConsumer(String id) {
+  private Consumer<Long, String> createConsumer() {
     Properties props = new Properties();
-    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, Config.KAFKA_BROKERS);
-    props.put(ConsumerConfig.GROUP_ID_CONFIG, Config.GROUP_ID_CONFIG);
+    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, clientConfig.getKafkaBrokers());
+    props.put(ConsumerConfig.GROUP_ID_CONFIG, Constants.GROUP_ID_CONFIG);
     props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
-    props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, Config.MAX_POLL_RECORDS);
+    props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, Constants.MAX_POLL_RECORDS);
     props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
-    props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, Config.OFFSET_RESET_EARLIEST);
-    props.put(ConsumerConfig.CLIENT_ID_CONFIG, id);
+    props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, Constants.OFFSET_RESET_EARLIEST);
+    props.put(ConsumerConfig.CLIENT_ID_CONFIG, clientConfig.getId());
 
     Consumer<Long, String> retVal = new KafkaConsumer<>(props);
-    retVal.subscribe(Collections.singletonList(Config.TOPIC_NAME));
+    retVal.subscribe(Collections.singletonList(clientConfig.getTopicName()));
 
     return retVal;
   }

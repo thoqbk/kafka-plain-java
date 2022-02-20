@@ -1,6 +1,7 @@
 package io.thoqbk.kafkaplainjava;
 
-import io.thoqbk.kafkaplainjava.config.Config;
+import io.thoqbk.kafkaplainjava.config.ClientConfig;
+import io.thoqbk.kafkaplainjava.constant.Constants;
 import io.thoqbk.kafkaplainjava.exception.InvalidCommandException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,15 +29,30 @@ public class Command implements Runnable {
       description = "Id of the consumer or producer")
   private String id;
 
+  @CommandLine.Option(
+      names = {"--bootstrap-server"},
+      description = "The Kafka server to connect to")
+  private String bootstrapServer;
+
+  @CommandLine.Option(
+      names = {"--topic"},
+      description = "The topic to enqueue or poll messages from")
+  private String topic;
+
   @Override
   public void run() {
-    logger.info("Running at mode {} with id {}", mode, id);
-    if (Config.PRODUCER_MODE.equals(mode)) {
-      new RunnableProducer(id, messages).run();
-    } else if (Config.CONSUMER_MODE.equals(mode)) {
-      new RunnableConsumer(id).run();
+    ClientConfig config = getClientConfig();
+    logger.info("Running at mode {} with id {}", mode, config.getId());
+    if (Constants.PRODUCER_MODE.equals(mode)) {
+      new RunnableProducer(config, messages).run();
+    } else if (Constants.CONSUMER_MODE.equals(mode)) {
+      new RunnableConsumer(config).run();
     } else {
       throw new InvalidCommandException("Invalid mode " + mode);
     }
+  }
+
+  private ClientConfig getClientConfig() {
+    return new ClientConfig(id, topic, bootstrapServer);
   }
 }

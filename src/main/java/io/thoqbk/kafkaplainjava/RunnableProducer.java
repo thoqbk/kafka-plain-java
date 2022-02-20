@@ -1,6 +1,6 @@
 package io.thoqbk.kafkaplainjava;
 
-import io.thoqbk.kafkaplainjava.config.Config;
+import io.thoqbk.kafkaplainjava.config.ClientConfig;
 import io.thoqbk.kafkaplainjava.exception.EnqueueException;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.LongSerializer;
@@ -14,20 +14,21 @@ import java.util.concurrent.ExecutionException;
 public class RunnableProducer implements Runnable {
   private static final Logger logger = LoggerFactory.getLogger(RunnableProducer.class);
 
-  private int messages;
-  private String id;
+  private final int messages;
+  private final ClientConfig clientConfig;
 
-  public RunnableProducer(String id, int messages) {
+  public RunnableProducer(ClientConfig clientConfig, int messages) {
     this.messages = messages;
-    this.id = id;
+    this.clientConfig = clientConfig;
   }
 
   @Override
   public void run() {
-    Producer<Long, String> producer = createProducer(id);
+    Producer<Long, String> producer = createProducer();
+    logger.info("Sending {} messages to topic {}", messages, clientConfig.getTopicName());
     for (long idx = 0; idx < messages; idx++) {
       ProducerRecord<Long, String> record =
-          new ProducerRecord<>(Config.TOPIC_NAME, idx, "This is record " + idx);
+          new ProducerRecord<>(clientConfig.getTopicName(), idx, "This is record " + idx);
       RecordMetadata metadata = send(producer, record);
       logger.info(
           "Record sent with key {} to partition {} with offset {}",
@@ -37,10 +38,10 @@ public class RunnableProducer implements Runnable {
     }
   }
 
-  private Producer<Long, String> createProducer(String id) {
+  private Producer<Long, String> createProducer() {
     Properties props = new Properties();
-    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, Config.KAFKA_BROKERS);
-    props.put(ProducerConfig.CLIENT_ID_CONFIG, id);
+    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, clientConfig.getKafkaBrokers());
+    props.put(ProducerConfig.CLIENT_ID_CONFIG, clientConfig.getId());
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
 

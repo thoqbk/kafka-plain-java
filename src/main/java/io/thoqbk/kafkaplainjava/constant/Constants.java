@@ -1,6 +1,6 @@
-package io.thoqbk.kafkaplainjava.config;
+package io.thoqbk.kafkaplainjava.constant;
 
-public class Config {
+public class Constants {
   public static final String KAFKA_BROKERS = "localhost:9092";
 
   public static final String TOPIC_NAME = "topic-demo";
