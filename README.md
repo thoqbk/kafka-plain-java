@@ -27,6 +27,7 @@ bin/kafka-server-start.sh config/server.properties
 - [Demo 1: multi-consumer instances with 1 topic and multi-partition](docs/demo-1-multi-partition.md)
 
 ## References
+- [Apache Kafka Tutorial](https://www.tutorialspoint.com/apache_kafka/index.htm)
 - [What is Apache Kafka?](https://www.youtube.com/watch?v=FKgi3n-FyNU)
 - [Introduction](https://kafka.apache.org/intro)
 - [Message Delivery Semantics](https://kafka.apache.org/documentation/#semantics)

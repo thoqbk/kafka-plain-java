@@ -86,3 +86,5 @@ Putting `.commitSync()` after the message processing to guarantee delivers `at l
 May need to implement the message processing logic in idempotent way to ensure the re-delivered messages won't cause any issue.
 
 Using `consumer.seek()` to update the value of the offset for next poll
+
+Kafka uses Zookeeper for maintaining their cluster state and offsets
