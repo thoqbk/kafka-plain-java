@@ -11,6 +11,8 @@ public class Constants {
 
   public static final int MAX_NO_MESSAGE_FOUND_COUNT = 100;
 
+  public static final int MAX_NO_ASSIGNMENT = 10;
+
   public static final String OFFSET_RESET_LATEST = "latest";
 
   public static final String OFFSET_RESET_EARLIEST = "earliest";

@@ -35,9 +35,19 @@ public class Command implements Runnable {
   private String bootstrapServer;
 
   @CommandLine.Option(
+      names = {"--group"},
+      description = "Consumer group")
+  private String consumerGroup;
+
+  @CommandLine.Option(
       names = {"--topic"},
       description = "The topic to enqueue or poll messages from")
   private String topic;
+
+  @CommandLine.Option(
+      names = {"--offset"},
+      description = "Seeking partition to this offset before polling messages")
+  private Long offset;
 
   @Override
   public void run() {
@@ -46,13 +56,13 @@ public class Command implements Runnable {
     if (Constants.PRODUCER_MODE.equals(mode)) {
       new RunnableProducer(config, messages).run();
     } else if (Constants.CONSUMER_MODE.equals(mode)) {
-      new RunnableConsumer(config).run();
+      new RunnableConsumer(config, offset).run();
     } else {
       throw new InvalidCommandException("Invalid mode " + mode);
     }
   }
 
   private ClientConfig getClientConfig() {
-    return new ClientConfig(id, topic, bootstrapServer);
+    return new ClientConfig(id, topic, bootstrapServer, consumerGroup);
   }
 }

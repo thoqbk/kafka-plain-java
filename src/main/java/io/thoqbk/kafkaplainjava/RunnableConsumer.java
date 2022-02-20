@@ -15,24 +15,22 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.Properties;
 
-public class RunnableConsumer implements Runnable {
+public record RunnableConsumer(ClientConfig clientConfig, Long offset) implements Runnable {
   private static final Logger logger = LoggerFactory.getLogger(RunnableConsumer.class);
-  private final ClientConfig clientConfig;
-
-  public RunnableConsumer(ClientConfig clientConfig) {
-    this.clientConfig = clientConfig;
-  }
 
   @Override
   public void run() {
     logger.info("Consumer is starting. Id {}", clientConfig.getId());
     Consumer<Long, String> consumer = createConsumer();
+    if (offset != null) {
+      seekOffset(consumer);
+    }
     int noMessageFound = 0;
     int consumedMessages = 0;
     while (true) {
       logger.info("Consumer is polling for new messages");
       ConsumerRecords<Long, String> consumerRecords =
-          consumer.poll(Duration.ofSeconds(Constants.POLLING_TIME_SECOND));
+              consumer.poll(Duration.ofSeconds(Constants.POLLING_TIME_SECOND));
       if (consumerRecords.isEmpty()) {
         noMessageFound++;
         if (noMessageFound > Constants.MAX_NO_MESSAGE_FOUND_COUNT) {
@@ -42,14 +40,14 @@ public class RunnableConsumer implements Runnable {
       }
       noMessageFound = 0;
       consumerRecords.forEach(
-          record -> {
-            logger.info(
-                "Received key {}, value {}, partition {}, offset {}",
-                record.key(),
-                record.value(),
-                record.partition(),
-                record.offset());
-          });
+              record -> {
+                logger.info(
+                        "Received key {}, value {}, partition {}, offset {}",
+                        record.key(),
+                        record.value(),
+                        record.partition(),
+                        record.offset());
+              });
       consumedMessages += consumerRecords.count();
       logger.info("Consumer {} consumed {} message(s)", clientConfig.getId(), consumedMessages);
       // To commit the offset of all polled messages
@@ -59,10 +57,27 @@ public class RunnableConsumer implements Runnable {
     }
   }
 
+  private void seekOffset(Consumer<Long, String> consumer) {
+    logger.info("Getting assignment and seeking the offset of partitions to {}", offset);
+    int noAssignment = 0;
+    while (noAssignment < Constants.MAX_NO_ASSIGNMENT) {
+      if (consumer.assignment().isEmpty()) {
+        noAssignment++;
+        consumer.poll(Duration.ofSeconds(Constants.POLLING_TIME_SECOND)); // to trigger assignment
+      } else {
+        break;
+      }
+    }
+    consumer.assignment().forEach(topicPartition -> {
+      logger.info("Seeking offset of the topic {}, partition {} to {}", topicPartition.topic(), topicPartition.partition(), offset);
+      consumer.seek(topicPartition, offset);
+    });
+  }
+
   private Consumer<Long, String> createConsumer() {
     Properties props = new Properties();
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, clientConfig.getKafkaBrokers());
-    props.put(ConsumerConfig.GROUP_ID_CONFIG, Constants.GROUP_ID_CONFIG);
+    props.put(ConsumerConfig.GROUP_ID_CONFIG, clientConfig.getConsumerGroup());
     props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
     props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, Constants.MAX_POLL_RECORDS);

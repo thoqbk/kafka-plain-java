@@ -11,16 +11,9 @@ import org.slf4j.LoggerFactory;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
-public class RunnableProducer implements Runnable {
+public record RunnableProducer(ClientConfig clientConfig,
+                               int messages) implements Runnable {
   private static final Logger logger = LoggerFactory.getLogger(RunnableProducer.class);
-
-  private final int messages;
-  private final ClientConfig clientConfig;
-
-  public RunnableProducer(ClientConfig clientConfig, int messages) {
-    this.messages = messages;
-    this.clientConfig = clientConfig;
-  }
 
   @Override
   public void run() {
@@ -28,13 +21,13 @@ public class RunnableProducer implements Runnable {
     logger.info("Sending {} messages to topic {}", messages, clientConfig.getTopicName());
     for (long idx = 0; idx < messages; idx++) {
       ProducerRecord<Long, String> record =
-          new ProducerRecord<>(clientConfig.getTopicName(), idx, "This is record " + idx);
+              new ProducerRecord<>(clientConfig.getTopicName(), idx, "This is record " + idx);
       RecordMetadata metadata = send(producer, record);
       logger.info(
-          "Record sent with key {} to partition {} with offset {}",
-          idx,
-          metadata.partition(),
-          metadata.offset());
+              "Record sent with key {} to partition {} with offset {}",
+              idx,
+              metadata.partition(),
+              metadata.offset());
     }
   }
 
@@ -49,7 +42,7 @@ public class RunnableProducer implements Runnable {
   }
 
   private RecordMetadata send(
-      Producer<Long, String> producer, ProducerRecord<Long, String> record) {
+          Producer<Long, String> producer, ProducerRecord<Long, String> record) {
     try {
       return producer.send(record).get();
     } catch (InterruptedException | ExecutionException e) {
