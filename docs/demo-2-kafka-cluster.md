@@ -38,6 +38,18 @@ Can pick any host for `bootstrap-server` as the brokers all know each other
 bin/kafka-topics.sh --create --topic topic-demo-2 --partitions 3 --replication-factor 2 --bootstrap-server localhost:9093
 ```
 
+Check status of the topic:
+```shell
+bin/kafka-topics.sh --describe --topic topic-demo-2 --bootstrap-server localhost:9093
+```
+
+Result:
+```
+	Topic: topic-demo-2	Partition: 0	Leader: 4	Replicas: 4,1	Isr: 4,1
+	Topic: topic-demo-2	Partition: 1	Leader: 1	Replicas: 1,2	Isr: 1,2
+	Topic: topic-demo-2	Partition: 2	Leader: 2	Replicas: 2,4	Isr: 2,4
+```
+
 ## Produce and consume messages from different brokers
 
 1. Run consumer
