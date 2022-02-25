@@ -27,7 +27,7 @@ bin/kafka-server-start.sh config/server.properties
 - [Demo 1: multi-consumer instances with 1 topic and multi-partition](docs/demo-1-multi-partition.md)
 - [Demo 2: Kafka cluster](docs/demo-2-kafka-cluster.md)
 - [Demo 3: testing replication](docs/demo-3-testing-replication.md)
-- [Demo 4: Kafka cluster in docker](docs/demo-4-kafka-cluster-in-docker.md)
+- [Demo 4: Kafka cluster in Docker](docs/demo-4-kafka-cluster-in-docker.md)
 
 ## References
 - [Apache Kafka Tutorial](https://www.tutorialspoint.com/apache_kafka/index.htm)

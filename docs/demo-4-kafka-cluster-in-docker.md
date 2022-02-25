@@ -1,4 +1,4 @@
-# Demo 4: Kafka cluster in docker
+# Demo 4: Kafka cluster in Docker
 To know:
 - how to run a Kafka cluster in Docker
 
