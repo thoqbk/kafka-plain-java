@@ -50,7 +50,7 @@ Check consumer log:
 ...
 ```
 
-## Understand Kafka config
+## Understanding Kafka config
 ```yml
 # config/docker-compose.yml
   kafka:
@@ -72,25 +72,25 @@ Check consumer log:
 ```
 
 With this config, Docker will start 1 Kafka broker instance which listens on 2 ports:
-- 9092 with name `CLIENT`
-- 29092 with name `EXTERNAL`
+- `9092` with name `CLIENT`
+- `29092` with name `EXTERNAL`
 
-The broker then connects with zookeeper at `zookeeper:2181` and registers its 2 addresses: `kafka:9092` and `localhost:29092`. Also, with `KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT` it wants Zookeeper to tell other brokers connect to `kafka:9092` if want to talk to it
+The broker then connects with Zookeeper at `zookeeper:2181` and registers its 2 addresses: `kafka:9092` and `localhost:29092`. Also, with `KAFKA_CFG_INTER_BROKER_LISTENER_NAME=CLIENT`, it wants Zookeeper to tell other brokers connect to `kafka:9092` if want to talk to it
 
 ## Q & A:
 1. Why we need both `KAFKA_CFG_LISTENERS` and `KAFKA_CFG_ADVERTISED_LISTENERS`?
 
 `KAFKA_CFG_LISTENERS` tells Kafka what ports it should listen on whereas `KAFKA_CFG_ADVERTISED_LISTENERS` tells others (e.g. producers, consumers, brokers) its addresses that they can connect if want to talk to it.
 
-They should be the same if all are running on bare metal machine (can connect using `localhost` or `127.0.0.1`) but if brokers, consumers and producers do not stay on the same machine or Docker instance, they must be diffirent. Two examples:
+They should be the same if all are running on bare metal machine (can connect using `localhost:9092` or `127.0.0.1:9092`) but consumers, producers or other brokers do not stay on the same machine or Docker instance, they must use different addresses. Two examples:
 - Saying we have 2 kafka instances `kafka` and `kafka2`, `kafka2` for sure cannot connect to `kafka` using `localhost:29092`. It must use `kafka:9092` instead.
 - Producer from host machine cannot connect to `kafka` using `kafka:9092`. It must use `localhost:29092` instead.
 
 2. Why we need 2 listeners (`EXTERNAL` and `CLIENT`)? Can just have 1 with 1 port (e.g. `9092`)?
 
 Kafka requires:
-- 2 listeners must use 2 different ports (1)
-- `KAFKA_CFG_ADVERTISED_LISTENERS` must be the subset of `KAFKA_CFG_LISTENERS` (2)
+- 2 listeners must use 2 different ports `(1)`
+- `KAFKA_CFG_ADVERTISED_LISTENERS` must be a subset of `KAFKA_CFG_LISTENERS` `(2)`
 
 So we cannot have these kinds of config:
 ```yml
@@ -109,7 +109,7 @@ or
       # ...
 ```
 
-Since listening on 1 more port shouldn't cost must resource and the points at `(1)` and `(2)` are reasonable, it's acceptable to have 2 ports in multi-machines Kafka cluster.
+Since listening on 1 more port shouldn't cost must resource and the points at `(1)` and `(2)` are reasonable, it's find to have 2 ports in multi-machine Kafka cluster.
 
 ## References
 - [Kafka Listeners – Explained](https://www.confluent.io/blog/kafka-listeners-explained/)
