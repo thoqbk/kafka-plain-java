@@ -58,8 +58,6 @@ Check consumer log:
     ports:
       - "29092:29092"
       - "9092:9092"
-    volumes:
-      - "kafka_data:/bitnami"
     environment:
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
@@ -82,7 +80,7 @@ The broker then connects with Zookeeper at `zookeeper:2181` and registers its 2 
 
 `KAFKA_CFG_LISTENERS` tells Kafka what ports it should listen on whereas `KAFKA_CFG_ADVERTISED_LISTENERS` tells others (e.g. producers, consumers, brokers) its addresses that they can connect if want to talk to it.
 
-They should be the same if all are running on bare metal machine (can connect using `localhost:9092` or `127.0.0.1:9092`) but consumers, producers or other brokers do not stay on the same machine or Docker instance, they must use different addresses. Two examples:
+They should be the same if all are running on bare metal machine (can connect using `localhost:9092` or `127.0.0.1:9092`) but consumers, producers or other brokers do not stay on the same machine or Docker instance, they must use different addresses (that's why we have `advertised listeners`). Two examples:
 - Saying we have 2 kafka instances `kafka` and `kafka2`, `kafka2` for sure cannot connect to `kafka` using `localhost:29092`. It must use `kafka:9092` instead.
 - Producer from host machine cannot connect to `kafka` using `kafka:9092`. It must use `localhost:29092` instead.
 
