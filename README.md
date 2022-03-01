@@ -28,6 +28,7 @@ bin/kafka-server-start.sh config/server.properties
 - [Demo 2: Kafka cluster](docs/demo-2-kafka-cluster.md)
 - [Demo 3: testing replication](docs/demo-3-testing-replication.md)
 - [Demo 4: Kafka cluster in Docker](docs/demo-4-kafka-cluster-in-docker.md)
+- [Demo 5: data persistence](docs/demo-5-data-persistence.md)
 
 ## References
 - [Apache Kafka Tutorial](https://www.tutorialspoint.com/apache_kafka/index.htm)
