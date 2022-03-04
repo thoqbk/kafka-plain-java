@@ -6,7 +6,7 @@ To know:
 
 ## Run Kafka cluster
 
-Follow steps in [Demo 2: Kafka cluster](docs/demo-2-kafka-cluster.md#run-kafka-cluster-locally) to run a cluster of 3 brokers (naming broker 1, 2 and 3) and create a topic with 3 `partitions` and `replication-factor` of 2
+Follow steps in [Demo 2: Kafka cluster](demo-2-kafka-cluster.md#run-kafka-cluster-locally) to run a cluster of 3 brokers (naming broker 1, 2 and 3) and create a topic with 3 `partitions` and `replication-factor` of 2
 
 ## Testing replication
 
