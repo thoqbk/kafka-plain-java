@@ -107,7 +107,7 @@ or
       # ...
 ```
 
-Since listening on 1 more port shouldn't cost must resource and the points at `(1)` and `(2)` are reasonable, it's find to have 2 ports in multi-machine Kafka cluster.
+Since listening on 1 more port shouldn't cost must resource and the points at `(1)` and `(2)` are reasonable, it's fine to have 2 ports in multi-machine Kafka cluster.
 
 ## References
 - [Kafka Listeners – Explained](https://www.confluent.io/blog/kafka-listeners-explained/)
