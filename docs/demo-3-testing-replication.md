@@ -1,6 +1,6 @@
 # Demo 3: testing replication
 
-To know:
+To understand:
 - whether the cluster still works if one broker goes offline
 - how to replace 1 broker by another
 

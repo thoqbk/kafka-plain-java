@@ -1,8 +1,8 @@
 # Demo 2: Kafka cluster
 
-To explore:
-- how to setup a Kafka cluster locally
-- producer sends messages to 1 broker, consumer can read it from another
+To answer 2 questions:
+- how to setup a Kafka cluster locally?
+- in a cluster, producer sends messages to 1 broker, can consumers read these messages from another one?
 
 ## Run Kafka cluster locally
 

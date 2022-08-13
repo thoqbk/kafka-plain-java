@@ -1,8 +1,8 @@
 # Demo 1: multi-consumer instances with 1 topic and multi-partition
 
-To see:
-- how messages distributed to partitions
-- how messages distributed and consumed if having multi-consumer
+To understand:
+- how messages are distributed to partitions
+- how messages are distributed and consumed if having multi-consumer
 
 Run kafka and create a topic with 2 partitions
 
