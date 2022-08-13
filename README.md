@@ -9,6 +9,9 @@ There are some key terms using in Kafka:
 - Partition: each topic has 1 or more paritions. Based on the key of the message, Kafka decides which partition the message is located. Also, with proper configuration, Kafka can replicate partitions to multiple machines to improve read performance and data recovery ability
 
 ## Prerequisites
+
+We need to have the following items ready to be able to run through the demos:
+
 - JDK 11+
 - Follow [step 1 and 2](https://kafka.apache.org/quickstart) to install and test Kafka on your local
 - Install [Docker](https://www.docker.com/get-started/) on your local. Lately we will use this to setup a Kafka cluster on Docker which is convenient for testing
@@ -26,6 +29,7 @@ There are some important files in this repository:
 - RunnableProducer.java: to produce messages when running with `--mode p`
 
 ## Demos:
+
 - [Demo 1: multi-consumer instances with 1 topic and multi-partition](docs/demo-1-multi-partition.md): to understand how Kafka messsages are distributed to partition and how they're consumed if there're multiple consumers
 - [Demo 2: Kafka cluster](docs/demo-2-kafka-cluster.md): to answer 2 questions: 1/ how to setup a Kafka cluster locally? 2/ in a cluster, producer sends messages to 1 broker, can consumers read these messages from another one?
 - [Demo 3: testing replication](docs/demo-3-testing-replication.md): to test the partition replication in a Kafka cluster
@@ -37,3 +41,4 @@ There are some important files in this repository:
 - [What is Apache Kafka?](https://www.youtube.com/watch?v=FKgi3n-FyNU)
 - [Introduction](https://kafka.apache.org/intro)
 - [Message Delivery Semantics](https://kafka.apache.org/documentation/#semantics)
+- [Kafka in a Nutshell](https://sookocheff.com/post/kafka/kafka-in-a-nutshell/)
